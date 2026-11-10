@@ -128,4 +128,4 @@ interface KVStoreRecord {
 
 ## License
 
-See [LICENSE.txt](LICENSE.txt) for license details.
+See [LICENSE](LICENSE) for license details.
