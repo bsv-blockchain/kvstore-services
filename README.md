@@ -18,6 +18,27 @@ This repo provides:
 - **History Tracking**: Chain tracking capabilities for KVStore tokens
 - **Pagination**: Built-in pagination and sorting support
 
+## Runtime dependencies and release validation
+
+The backend pins `@bsv/sdk` 4.0.1, `@bsv/overlay` 2.7.0 and
+`@bsv/overlay-express` 2.8.0, with MongoDB driver 7.6.0. Node.js 22.12 or
+newer is required. The explicit backend pins survive CARS runtime generation.
+Overlay Express accepts both JSON-array and comma-separated `X-Topics` headers.
+
+Run `npm ci --prefix backend`, `npm run build --prefix backend`, and
+`npm test --prefix backend -- --runInBand`. Tests start an isolated MongoDB
+8.0.30 instance and include real SDK signature compatibility checks. Node's VM
+module flag in the test script permits the MongoDB driver's dynamic imports.
+The CI workflow validates Node.js 22 and 24 without accessing production data.
+
+For the mainnet Babbage target, run `npm ci`, then `npm run build` to create
+an artifact. Use `cars doctor Babbage` and a positive project-balance check before
+`npm run deploy`. The CLI is `@p2ppsr/cars-cli`; the old `@bsv/cars-cli` package
+is deprecated. Preserve the existing project/database identity and verify the
+serving image, package versions, legacy/current header handling, lookup behavior
+and availability after release. A successful malformed-body probe alone does
+not qualify funded publication.
+
 ## Development Setup
 
 This project uses the **LARS** (local) and **CARS** (cloud) toolchains to simplify development and deployment of overlay services.

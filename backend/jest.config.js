@@ -1,10 +1,11 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
-  // Use the preset specifically designed for ESM
-  preset: 'ts-jest/presets/default-esm',
+  // Keep existing Jest mocks in CommonJS; the Node VM flag permits driver dynamic imports.
+  preset: 'ts-jest',
 
   // Use the Node environment for testing
   testEnvironment: 'node',
+  testTimeout: 30000,
 
   // Ignore compiled output
   testPathIgnorePatterns: ['dist/', 'node_modules/'],
@@ -12,18 +13,18 @@ export default {
   // Configure transform for ESM
   transform: {
     '^.+\\.ts$': ['ts-jest', {
-      useESM: true,
+      useESM: false,
       tsconfig: 'tsconfig.jest.json'
     }]
   },
 
-  // Tell Jest that files ending in .ts should be treated as ESM modules
-  extensionsToTreatAsEsm: ['.ts'],
+  // TypeScript test modules use the CommonJS transform.
+  extensionsToTreatAsEsm: [],
 
   // Map .js imports to .ts files for ESM compatibility  
   moduleNameMapper: {
-    './docs/KVStoreLookupDocs.md.js': '<rootDir>/src/__tests/__mocks__/lookupDocsMock.js',
-    './docs/KVStoreTopicManagerDocs.md.js': '<rootDir>/src/__tests/__mocks__/topicDocsMock.js',
+    './docs/KVStoreLookupDocs.md.js': '<rootDir>/src/__tests/__mocks__/lookupDocsMock.cjs',
+    './docs/KVStoreTopicManagerDocs.md.js': '<rootDir>/src/__tests/__mocks__/topicDocsMock.cjs',
     '^(\\.{1,2}/.*)\\.js$': '$1'
   },
 

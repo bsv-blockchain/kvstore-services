@@ -13,9 +13,9 @@ describe('KVStoreStorageManager', () => {
   let storageManager: KVStoreStorageManager
 
   beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create()
+    mongoServer = await MongoMemoryServer.create({ binary: { version: '8.0.30' } })
     const uri = mongoServer.getUri()
-    client = new MongoClient(uri)
+    client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 })
     await client.connect()
     db = client.db('test-kvstore')
   })
@@ -38,6 +38,7 @@ describe('KVStoreStorageManager', () => {
     describe('storeRecord', () => {
       it('should store a new KVStore record with all required fields', async () => {
         const record = KVStoreRecordFactory.create()
+        const startedAt = Date.now()
 
         await storageManager.storeRecord(
           record.txid,
@@ -57,7 +58,8 @@ describe('KVStoreStorageManager', () => {
           controller: record.controller
         })
         expect(storedRecords[0].createdAt).toBeInstanceOf(Date)
-        expect(storedRecords[0].createdAt.getTime()).toBeCloseTo(Date.now(), -2)
+        expect(storedRecords[0].createdAt.getTime()).toBeGreaterThanOrEqual(startedAt)
+        expect(storedRecords[0].createdAt.getTime()).toBeLessThanOrEqual(Date.now())
       })
 
       it('should store multiple records with different data', async () => {

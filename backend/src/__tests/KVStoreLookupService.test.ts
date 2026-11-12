@@ -16,9 +16,9 @@ describe('KVStoreLookupService', () => {
   let lookupService: any
 
   beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create()
+    mongoServer = await MongoMemoryServer.create({ binary: { version: '8.0.30' } })
     const uri = mongoServer.getUri()
-    client = new MongoClient(uri)
+    client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 })
     await client.connect()
     db = client.db('test-kvstore')
   })
